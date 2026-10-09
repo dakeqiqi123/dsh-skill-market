@@ -1,0 +1,19 @@
+# 依赖与构建产物：profile 会以 file:/link: 方式引用本包，node_modules 永远不进仓库
+node_modules/
+pnpm-lock.yaml
+package-lock.json
+yarn.lock
+
+# 本机与编辑器噪音
+.DS_Store
+Thumbs.db
+desktop.ini
+*.log
+*.tmp
+.idea/
+.vscode/
+*.swp
+
+# 插件自己的运行时产物（若在本目录内跑过测试或安装）
+.skill-market-*.tmp
+.skill-market-unpack-*/

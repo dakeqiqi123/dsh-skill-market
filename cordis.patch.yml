@@ -1,0 +1,29 @@
+# Bundle layer for dsh-skill-market.
+#
+# A top-level array of loader patch entries. `id` is the row identity inside the
+# composed config tree; `name` is the package resolvable by Node. A later layer
+# that targets the same `id` REPLACES this whole `config` object (no deep merge),
+# so an override must restate every key it still wants.
+- insert:
+    - id: skill-market
+      name: dsh-skill-market
+      config:
+        # Directories scanned in addition to the install root. Each entry follows
+        # the same layout the built-in filesystem provider uses:
+        #   <dir>/<skill-name>/SKILL.md   and   <dir>/<skill-name>.md
+        localDirs: []
+        # Where GitHub/market installs land. Empty string means $DSH_HOME/skills,
+        # which the built-in provider already watches — installed skills appear
+        # without restarting the Harness.
+        installRoot: ''
+        # Precedence inside this provider's layer. Lower wins. The built-in
+        # filesystem provider uses 100/200 project, 300 custom, 400/500 user,
+        # 600 bundled; 350 sits just above the user directories.
+        rank: 350
+        # Curated sources shown when the client asks for the catalog.
+        # `ref` should be pinned to a commit sha or tag, never a moving branch.
+        sources: []
+        # Optional GitHub token for private repositories or rate limits. Prefer
+        # leaving this empty and setting DSH_SKILL_MARKET_TOKEN in the
+        # environment; never commit a token into this file.
+        token: ''

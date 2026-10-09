@@ -1,0 +1,81 @@
+{
+  "name": "dsh-skill-market",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Local / GitHub / curated-list skill source with a composer picker entry for the DeepSeek Harness",
+  "main": "index.js",
+  "exports": {
+    ".": "./index.js",
+    "./client": "./client.js",
+    "./package.json": "./package.json",
+    "./locale/*.json": "./locale/*.json"
+  },
+  "files": [
+    "index.js",
+    "client.js",
+    "lib",
+    "locale",
+    "tools",
+    "test/smoke.js",
+    "test/marketplace-live.js",
+    "test/panel-logic.js",
+    "test/fixtures",
+    "cordis.patch.yml",
+    "icon.svg",
+    "README.md"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "inject": [
+        "@deepseek-ai/dsh-client-ui-conversation"
+      ]
+    }
+  },
+  "meta": {
+    "title": "技能管理",
+    "description": "浏览、搜索、安装与卸载技能：支持本地文件夹、压缩包、粘贴 SKILL.md 与 GitHub 四种来源，可分别控制「菜单可见」与「模型可用」，列表实时刷新。"
+  },
+  "icon": "./icon.svg",
+  "author": "dakeqiqi123",
+  "license": "MIT",
+  "keywords": [
+    "dsh",
+    "dsh-plugin",
+    "deepseek-harness",
+    "skills",
+    "skill-manager",
+    "skill-market"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dakeqiqi123/dsh-skill-market.git"
+  },
+  "homepage": "https://github.com/dakeqiqi123/dsh-skill-market#readme",
+  "bugs": {
+    "url": "https://github.com/dakeqiqi123/dsh-skill-market/issues"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "peerDependencies": {
+    "@deepseek-ai/dsh": ">=0.2.0-rc.2"
+  },
+  "peerDependenciesMeta": {
+    "@deepseek-ai/dsh": {
+      "optional": true
+    }
+  },
+  "scripts": {
+    "test": "node test/smoke.js",
+    "test:panel": "node test/panel-logic.js",
+    "test:live": "node test/marketplace-live.js",
+    "install:dir": "node tools/install-skill-dir.js",
+    "install:repo": "node tools/install-skill-dir-git.js",
+    "deps": "node tools/check-skill-deps.js"
+  }
+}
