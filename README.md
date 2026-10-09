@@ -1,5 +1,7 @@
 # dsh-skill-market
 
+[![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
 Skills for the DeepSeek Harness: a composer entry that **picks a skill**, and a management panel that
 **installs, enables, organizes and removes** them.
 
@@ -7,7 +9,8 @@ Skills for the DeepSeek Harness: a composer entry that **picks a skill**, and a 
 再往下两行是 **从本地添加技能** 和 **管理技能**（浏览、搜索、双击即用、两档开关、四种安装来源）。
 
 > 本插件属于 DeepSeek Harness 生态的第三方插件，不是官方项目。适配：Harness 0.2.x 桌面端（Web 前端）。
-> 开发过程、验证矩阵与踩坑记录见 [`docs/DEVNOTES.md`](docs/DEVNOTES.md)。
+> 开发过程、验证矩阵与踩坑记录见 [`docs/DEVNOTES.md`](docs/DEVNOTES.md)；
+> 立项时的设计笔记（扩展点取证与取舍）见 [`docs/DESIGN.md`](docs/DESIGN.md)。
 
 ---
 

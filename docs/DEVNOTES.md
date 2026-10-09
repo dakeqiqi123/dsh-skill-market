@@ -137,26 +137,6 @@ $p = "$env:DSH_PROFILE_DIR"      # <Harness home>\profiles\desktop
 # 1) 依赖与 bundle 登记都在
 Select-String -Path "$p\package.json" -Pattern 'skill-market'
 
-# 2) 链接真的指到包目录
-Get-Item "$p\node_modules\dsh-skill-market" | Select-Object Name,LinkType,Target
-
-# 3) host 半边活着：模型能直接调 skill_market 工具（action: "local"）
-```
-
-host 半边装完**立刻生效**（profile 里启用了 HMR，无需重启）：插件注册的 `skill_market`
-工具当场出现在会话工具表里，`action: "local"` 能读回真实的技能目录清单。
-
-client 半边（输入框左下角的「技能」按钮）如果没出现，**刷新一次应用窗口**即可；
-`index.js` / `lib/*.js` 改过则要重启应用（host 模块被 Loader 缓存）。
-
-### 装完怎么核对（三步，全部读写真实文件）
-
-```powershell
-$p = "$env:DSH_PROFILE_DIR"      # <Harness home>\profiles\desktop
-
-# 1) 依赖与 bundle 登记都在
-Select-String -Path "$p\package.json" -Pattern 'skill-market'
-
 # 2) 装进去的是真实目录（副本式），文件数与副本一致
 Get-Item "$p\node_modules\dsh-skill-market" | Select-Object Name,LinkType
 (Get-ChildItem -Recurse -File "$p\node_modules\dsh-skill-market" | Measure-Object).Count   # 22
@@ -230,8 +210,8 @@ client 半边（输入框左下角的「技能」按钮）如果没出现，**�
 本插件的 host 代码**只 import Node 内置模块和相对路径文件**。
 
 原因：模块解析从插件目录往上找，而 profile 的 `node_modules` 里**没有** `@deepseek-ai/*`；
-那些包装在 dsh 安装目录，只有 DSH 自己的 Loader 能解析。你 profile 里已有的第三方插件
-同 profile 里的其他第三方插件（`dshmarket`、`dsh-whale-widget`、`dsh-skill-picker`）的
+那些包装在 dsh 安装目录，只有 DSH 自己的 Loader 能解析。
+本机 profile 里已有的第三方插件（`dshmarket`、`dsh-whale-widget`、`dsh-skill-picker`）的
 host 入口同样一个裸 import 都没有——只用 `ctx.inject`。
 
 本机实测结果（从已安装位置做 `require.resolve`）：
@@ -578,9 +558,13 @@ node test/smoke.js
 - [x] provider 在活目录上发现候选：`skill-market-self-check [market-install rank=352]`
 - [x] **`audit-report-checker`（18 文件）和 `tianchuan-perspective`（15 文件）整目录装好，
       当前会话的可用技能目录立刻出现两者，描述完整**（含五行块标量描述）
+- [x] `skill_market` 工具出现在 agent 的工具列表里（说明原生 definition 注册成功）
+- [x] GitHub 目录 / 搜索 / 安装 / 卸载全链路（`test/marketplace-live.js`，两个仓库）
+- [ ] `skill_market { action: "local" }` 返回结果 —— 首次实测报了
+      `content.some is not a function`（`render` 少了 content-block 包装），**已修**，待重启复验
 - [ ] 内置 `/` 菜单里能搜到并选中该技能 —— 需要你看一眼菜单
-- [ ] 左下角按钮点开 → 只有本插件的分组 → Escape 能关 —— **需要先重启 DSH 再刷新页面**
-- [ ] `skill_market { action: "local" }` —— 需要重启 DSH（host 模块已缓存）
+- [ ] 左下角按钮点开 → 只有本插件的分组 → Escape 能关 —— 需要刷新页面后点一下
+
 - [ ] 往 `localDirs` 丢一个新技能目录 → 不用重启就能搜到
 - [ ] `skill_market { action: "install" }` 装一个 GitHub 技能 → `$DSH_HOME/skills/<name>/SKILL.md` 存在 → 菜单可见
 - [ ] 同名技能同时存在时，赢的是你按 rank 预期的那一个
@@ -595,11 +579,19 @@ node test/smoke.js
 ## 已知限制
 
 - **`skillMarket` 服务在本机不会发布**：它需要 `@deepseek-ai/cordis` 的 `Service` 基类，而该 specifier 在 profile 里解析不到（已实测）。插件会打一条 info 跳过，provider 和 `skill_market` 工具都不受影响。要让它生效，只能让 DSH 自己提供这个 specifier。
-- **没有 `defineTool` 的参数校验**：工具用手写原生 definition，参数校验由 `normalizeAction` 自己兜（只校验 `action`，其余参数按需读取）。`defineTool` 未来若可用，建议换回去。
+- **没有 `defineTool` 的参数校验**：工具用手写原生 definition，参数校验由 `normalizeAction` 自己兜（只校验 `action`，其余参数按需读取）。**另外 `render` 必须自己返回 content-block 数组**，宿主不会再包一层。`defineTool` 未来若可用，建议换回去。
 - **`conversation.input.left` 是 list 槽**，同一个 `priority` 下 `id` 必须唯一。如果你还装了别的往这里放按钮的插件，不冲突；`priority` 相同会直接抛错。
-- **编程式打开菜单依赖 `toggleSource`**：宿主里唯一调用它的是 composer 自带的菜单按钮，而那条路径传入的是真实编辑器选区。本插件传一个合成 hit（`position: 'leading'`、空 span）。如果本版本不接受合成 hit，表现为点击按钮后菜单打开但**选中行不生效**——此时用 `/` 菜单（功能完全一致），或改成在 `conversation.composer.dock` 里自绘面板。**这一条还没验证过**（需要重启 + 刷新页面后由你点一下）。
+- **编程式打开菜单依赖 `toggleSource`**：宿主里唯一调用它的是 composer 自带的菜单按钮，而那条路径传入的是真实编辑器选区。本插件传一个合成 hit（`position: 'leading'`、空 span）。如果本版本不接受合成 hit，表现为点击按钮后菜单打开但**选中行不生效**——此时用 `/` 菜单（功能完全一致），或改成在 `conversation.composer.dock` 里自绘面板。**这一条还没验证过**。
+- **同名技能在不同子目录里会被去重**：仓库同时发布 `.dsh/skills/<n>/` 和 `skills/<n>/` 时，
+  目录里只留一个（按路径排序第一个），另一个会打一行 progress 说明。因为安装是按技能名落盘的，
+  两个同名条目必然有一个装不上。
+- **`skill_market install` 只装单个 `SKILL.md`**，只适合单文件技能。目录型技能必须用
+  `tools/install-skill-dir.js`——否则 `references/`、`scripts/` 全丢，技能读起来没问题、
+  一执行就崩。把整目录安装并进工具是下一步最该做的事。
+- **不在仓库根目录的技能**：只收集路径深度 ≤ 6 段、且文件名恰为 `SKILL.md` 的文件。
+  如果某个仓库的技能放在更深的位置，用 `owner/repo#ref` 配合 `path` 参数，或把该子目录单独列为一个仓库。
 - **`installRoot` 必须是内置 provider 的扫描根之一**（默认 `$DSH_HOME/skills` 就是），否则装完要重启。
-- **`sources` 用 `main` 会漂移**。默认值方便第一次试用，正式用请 pin 到 commit sha 或 tag。
+- **不写 `#ref` 时读的是仓库当前默认分支**，随上游变动而变动。`sources` 的默认值方便第一次试用，要可复现就 pin 到 commit sha 或 tag。
 - **私有仓库**需要 `DSH_SKILL_MARKET_TOKEN` 或 `token` 配置。
 - 目前**没有**自绘的集市面板（浏览 / 一键安装按钮）。集市能力已经通过 `skill_market` 工具可用，图形化面板属于下一阶段。
 - 技能正文会随用户消息一起进入上下文，所以选中一个技能**必然**付它的 token 成本，这一点和使用 `skill` 工具相同。
@@ -610,9 +602,10 @@ node test/smoke.js
 ## 开发
 
 ```sh
-node test/smoke.js                    # 不需要网络：解析、发现、裁决
-node test/panel-logic.js              # 不需要 Harness：面板读写的 host 侧逻辑
-node test/marketplace-live.js         # 真连 GitHub，验证目录/搜索/安装/卸载全链路
+node --check index.js client.js lib/*.js   # 语法
+node test/smoke.js                          # 不需要网络：解析、发现、裁决
+node test/panel-logic.js                    # 不需要 Harness：面板读写的 host 侧逻辑
+node test/marketplace-live.js               # 真连 GitHub，验证目录/搜索/安装/卸载全链路
 node test/marketplace-live.js NanmiCoder/dsh-agent-teams   # 换一个仓库再跑
 ```
 
@@ -645,60 +638,10 @@ panel logic checks passed
 > 配额用光时用 `tools/install-skill-dir-git.js` 验证同一批能力——它走 git，不受配额影响。
 > 想根治就给 `DSH_SKILL_MARKET_TOKEN` 设一个 token。
 
-装进 DSH 之后逐项确认（**"装上了"不等于"能用"**）：
+改动怎么生效：
 
-- [x] 往安装目录放一个技能 → **当前会话的技能目录立刻出现它**，不用重启也不用刷新
-- [x] 该技能能被加载，正文与资源基目录都正确（`Base directory: %USERPROFILE%\.dsh\skills\skill-market-self-check`）
-- [x] provider 在活目录上发现候选：`skill-market-self-check [market-install rank=352]`
-- [x] `skill_market` 工具出现在 agent 的工具列表里（说明原生 definition 注册成功）
-- [x] GitHub 目录 / 搜索 / 安装 / 卸载全链路（`test/marketplace-live.js`，两个仓库）
-- [ ] `skill_market { action: "local" }` 返回结果 —— 首次实测报了
-      `content.some is not a function`（`render` 少了 content-block 包装），**已修**，待重启复验
-- [ ] 内置 `/` 菜单里能搜到并选中该技能 —— 需要你看一眼菜单
-- [ ] 左下角按钮点开 → 只有本插件的分组 → Escape 能关 —— 需要刷新页面后点一下
-- [ ] 往 `localDirs` 丢一个新技能目录 → 不用重启就能搜到
-- [ ] 同名技能同时存在时，赢的是你按 rank 预期的那一个
-- [ ] 卸载插件后 slot / source / provider 全部消失，控制台无残留报错
-- [ ] 明暗两套主题下按钮可读
-
-> 已经装了一个自检技能 `skill-market-self-check` 在 `$DSH_HOME/skills/`。
-> 它本身就是一个可用的验证入口：让 agent 加载它，它会报告当前生效的技能来源。
-
----
-
-## 已知限制
-
-- **`skillMarket` 服务在本机不会发布**：它需要 `@deepseek-ai/cordis` 的 `Service` 基类，而该 specifier 在 profile 里解析不到（已实测）。插件会打一条 info 跳过，provider 和 `skill_market` 工具都不受影响。要让它生效，只能让 DSH 自己提供这个 specifier。
-- **没有 `defineTool` 的参数校验**：工具用手写原生 definition，参数校验由 `normalizeAction` 自己兜（只校验 `action`，其余参数按需读取）。`defineTool` 未来若可用，建议换回去。**另外 `render` 必须自己返回 content-block 数组**，宿主不会再包一层。
-- **`conversation.input.left` 是 list 槽**，同一个 `priority` 下 `id` 必须唯一。如果你还装了别的往这里放按钮的插件，不冲突；`priority` 相同会直接抛错。
-- **编程式打开菜单依赖 `toggleSource`**：宿主里唯一调用它的是 composer 自带的菜单按钮，而那条路径传入的是真实编辑器选区。本插件传一个合成 hit（`position: 'leading'`、空 span）。如果本版本不接受合成 hit，表现为点击按钮后菜单打开但**选中行不生效**——此时用 `/` 菜单（功能完全一致），或改成在 `conversation.composer.dock` 里自绘面板。**这一条还没验证过**。
-- **同名技能在不同子目录里会被去重**：仓库同时发布 `.dsh/skills/<n>/` 和 `skills/<n>/` 时，
-  目录里只留一个（按路径排序第一个），另一个会打一行 progress 说明。因为安装是按技能名落盘的，
-  两个同名条目必然有一个装不上。
-- **`skill_market install` 只装单个 `SKILL.md`**，只适合单文件技能。目录型技能必须用
-  `tools/install-skill-dir.js`——否则 `references/`、`scripts/` 全丢，技能读起来没问题、
-  一执行就崩。把整目录安装并进工具是下一步最该做的事。
-- **`installRoot` 必须是内置 provider 的扫描根之一**（默认 `$DSH_HOME/skills` 就是），否则装完要重启。
-- **不写 `#ref` 时读的是仓库当前默认分支**，随上游变动而变动。要可复现就 pin 到 commit sha 或 tag。
-- **私有仓库**需要 `DSH_SKILL_MARKET_TOKEN` 或 `token` 配置。
-- **不在仓库根目录的技能**：只收集路径深度 ≤ 6 段、且文件名恰为 `SKILL.md` 的文件。
-  如果某个仓库的技能放在更深的位置，用 `owner/repo#ref` 配合 `path` 参数，或把该子目录单独列为一个仓库。
-- 目前**没有**自绘的集市面板（浏览 / 一键安装按钮）。集市能力已经通过 `skill_market` 工具可用，图形化面板属于下一阶段。
-- 技能正文会随用户消息一起进入上下文，所以选中一个技能**必然**付它的 token 成本，这一点和使用 `skill` 工具相同。
-- **安装方式是链接**：包一旦从 `<WORKSPACE>\` 移走或删除，profile 就会加载失败。要变成独立副本见"安装"一节的最后一段。
-
----
-
-## 开发
-
-```sh
-node --check index.js client.js lib/*.js   # 语法
-node test/smoke.js                          # 行为
-node test/marketplace-live.js               # 联网全链路
-```
-
-- Host 代码改动 → **重启 DSH**（host 模块被 Loader 缓存，改文件不会换掉已加载的 fiber）。
-- Client 代码改动 → 构建 watcher 在跑就自动重载，否则刷新页面。
-- `package.json` / `exports` / 插件集合改动 → **重启**。
+- `client.js` → 构建 watcher 在跑就自动重载，否则**刷新页面**。
+- `index.js` / `lib/*.js` → **重启 DSH**（host 模块被 Loader 缓存，改文件不会换掉已加载的 fiber）。
+- `package.json` / `exports` / 插件集合 → **重启**。
 - 因为是 junction 链接，**不用重装**；改完工作区里的文件重启即可。
 - Client 半边**不要** `require` 任何 `@deepseek-ai/dsh-client-*` 包；只从浏览器模块表取 `react`。样式只用 `--dsw-alias-*` / `--dsw-specific-*` 主题 token。

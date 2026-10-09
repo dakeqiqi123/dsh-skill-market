@@ -17,6 +17,7 @@
     "lib",
     "locale",
     "tools",
+    "docs",
     "test/smoke.js",
     "test/marketplace-live.js",
     "test/panel-logic.js",
