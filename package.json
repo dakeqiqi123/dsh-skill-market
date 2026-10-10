@@ -1,6 +1,6 @@
 {
   "name": "dsh-skill-market",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "type": "module",
   "description": "Local / GitHub / curated-list skill source with a composer picker entry for the DeepSeek Harness",
@@ -19,6 +19,8 @@
     "tools",
     "docs",
     "test/smoke.js",
+    "test/client-render.js",
+    "test/rename.js",
     "test/marketplace-live.js",
     "test/panel-logic.js",
     "test/fixtures",
@@ -73,6 +75,8 @@
   },
   "scripts": {
     "test": "node test/smoke.js",
+    "test:client": "node test/client-render.js",
+    "test:rename": "node test/rename.js",
     "test:panel": "node test/panel-logic.js",
     "test:live": "node test/marketplace-live.js",
     "install:dir": "node tools/install-skill-dir.js",

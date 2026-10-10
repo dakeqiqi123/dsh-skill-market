@@ -33,19 +33,22 @@
 
 **Client 半边**（`client.js`）
 
-- 输入框左下角一个「技能」按钮，点开**宿主自己的**触发菜单：搜索框、上下键、Enter、Escape
-  全部复用宿主实现，外观与交互天然一致。
-- **菜单默认只列 10 个技能**：按「最近使用」与「安装时间」取较新者排序，取前 10，避免技能多了以后菜单失控。
+- 输入框左下角一个「技能」按钮，点开**插件自绘的弹层**（`dshSkillPicker_*`），浮在输入框正上方：
+  顶部搜索框，按技能**名称 / 描述 / 标签**（来源、「本插件安装」、「只读」、「菜单可见 / 不可见」等）实时过滤。
+  （早期版本复用宿主触发菜单；自绘是为了让搜索覆盖标签、并给空结果一个像样的空状态，见下文 2026-10-10 一节。）
+- **弹层空查询时只列 10 个技能**：按「最近使用」与「安装时间」取较新者排序，取前 10，避免技能多了以后菜单失控。
   每次从菜单选用都会记一次使用（状态文件在 Harness home 的 `skill-market/usage.json`），所以常用的会稳定留在前面。
-  一旦在输入框里打字搜索，就在**全部技能**里找，不会被这 10 个挡住。
-- 菜单底部两行固定动作（与 WorkBuddy 一致）：
+  一旦在顶部搜索框里输入，就在**全部技能**里找，不会被这 10 个挡住。
+- 弹层底部两行固定动作（与 WorkBuddy 一致）：
   - **从本地添加技能** —— 直接弹系统目录选择器，选中含 `SKILL.md` 的文件夹即装；
   - **管理技能** —— 打开管理面板（全部技能都在这里，**双击任意一行即可使用**：技能直接落进输入框，面板自动关闭）。
+- 在输入框里打 `/` 仍走**宿主自带**的触发菜单（`inputTriggers.registerSource`），行为不变。
 - 管理面板：搜索 + 分类筛选（全部 / 本插件安装 / 本地目录 / 其他来源 / 可修改）、
   每行显示来源徽标与两个开关（**菜单可见** = `user-invocable`，**模型可用** = `disable-model-invocation`）、
-  可卸载本插件安装的技能；底部四个安装入口（从文件夹 / 上传 zip / 粘贴内容 / 从 GitHub）。
-  打开期间每 2 秒自动重读一次列表，别处（或模型）装好的技能会自己出现。
+  可卸载本插件安装的技能；还有「改中文名」、四个安装入口（从文件夹 / 上传 zip / 粘贴内容 / 从 GitHub）。
+  搜索覆盖名称、显示名、曾用名、描述与标签。打开期间每 2 秒自动重读一次列表，别处（或模型）装好的技能会自己出现。
   双击走的是宿主自己的输入通道（把 `/<name> ` 插到光标处）；万一没有可用输入框，会退化为复制该 token 并提示。
+- 弹层与面板都用**不透明纯白底**（`#FFFFFF`）并锁定浅色文字，深色主题下同样清晰。
 - 整个 `apply` 有兜底：UI 半边再出任何错只写一条 console 错误，**不会阻断应用启动**。
 
 选中技能后写入草稿的字面文本是 `/<skill-name> `，和手输完全一样：提交时宿主的 pre-step 边界识别这个 token 并注入技能正文，**不依赖模型主动调工具**。
@@ -65,6 +68,11 @@
 | 面板打开期间每 2 秒自动重读列表（别处安装会自己出现） | 已确认 |
 | 菜单只列 10 个：17 个技能时菜单正好 10 行 + 底部两行；选用后该技能在下次打开时排到最前 | 已在隔离宿主里确认 |
 | 面板双击一行：技能落进输入框、面板自动关闭、使用记录写入 | 已确认 |
+| 重命名：物理移动目录 + 改写 frontmatter、旧名进 `aliases`、校验拒绝非法/重名 | `test/rename.js` 全绿 |
+| 显示名：只写 frontmatter 不动文件；不发布成条目（中文名进注册表会被拒） | `test/rename.js` 全绿 |
+| 别名条目：旧技术名仍可调用，rank 900 不抢占真实技能 | `test/rename.js` 全绿 |
+| 客户端三处 UI（弹层 / 面板 / 表单）在 React 替身下各渲染一次不抛错 | `test/client-render.js` 全绿 |
+| 弹层与面板视觉（纯白底、空状态、显示名 + `/技术名` + 原名徽标） | 已用无头 Edge 渲染四个界面确认 |
 | 面板视觉与交互手感 | 需你在应用里过一眼 |
 
 ---
@@ -355,23 +363,32 @@ user-invocable: true
 
 | action | 参数 | 作用 |
 |---|---|---|
+| `list` | — | 面板用的完整列表（含 `previousNames`、`writable`、`installed` 标注） |
+| `local` | — | 列出本地目录里已发现的技能和已安装的技能 |
 | `catalog` | — | 列出 `sources` 里每个仓库当前的技能 |
 | `search` | `query`、`spec?` | 在清单和一个临时仓库里搜技能 |
 | `install` | `repo`、`path`、`ref?` | 把**单个** `SKILL.md` 装进 `installRoot` |
+| `install-dir` | `directory` | 整目录安装（含 scripts / references） |
+| `install-text` | `text` | 把粘贴的 `SKILL.md` 落盘 |
+| `policy` | `path`、`modelInvocable?`、`userInvocable?` | 改写 frontmatter 里的两个调用开关 |
+| `rename` | `path`、`newName` | 改名：移动目录/文件 + 写 `name`，原名进 `aliases` 永久保留 |
 | `remove` | `skillName` | 删除**本插件装的**技能 |
-| `local` | — | 列出本地目录里已发现的技能和已安装的技能 |
 
 ## 会话命令 `/skill-market`
 
-面板就是通过它读写 host 的，也可以自己用：
+面板早期通过它读写 host，现在面板走 HTTP 路由，命令留给手输与调试：
 
 | 命令 | 作用 |
 |---|---|
-| `/skill-market list` | 面板用的完整列表（含 hidden / removable 标注） |
-| `/skill-market hide <name>` | 隐藏一个技能 |
-| `/skill-market show <name>` | 取消隐藏 |
-| `/skill-market remove <name>` | 卸载本插件装的技能 |
+| `/skill-market list` | 面板用的完整列表 |
 | `/skill-market install <owner/repo> [目录 ...]` | 整目录安装；不给目录就装仓库里全部 |
+| `/skill-market add-dir <绝对路径>` | 从本地文件夹安装 |
+| `/skill-market add-zip <base64> [名称]` | 从 zip 安装（base64 单行传输） |
+| `/skill-market add-text <base64>` | 粘贴的 SKILL.md 落盘 |
+| `/skill-market policy <base64 json>` | 改写两个调用开关，如 `{"path":"…","userInvocable":false}` |
+| `/skill-market rename <base64 json>` | 改名，如 `{"path":"…","name":"new-name"}` |
+| `/skill-market touch <name>` | 记一次使用（菜单"最近使用"排序） |
+| `/skill-market remove <name>` | 卸载本插件装的技能 |
 
 > 为什么是命令而不是 HTTP 路由或 RPC：客户端可调用的**结构化** API 在 DSH 里来自
 > 代码生成的 Remote 命名空间（`@Remote` + typert 产物），纯 JS 插件产不出来；
@@ -562,8 +579,8 @@ node test/smoke.js
 - [x] GitHub 目录 / 搜索 / 安装 / 卸载全链路（`test/marketplace-live.js`，两个仓库）
 - [ ] `skill_market { action: "local" }` 返回结果 —— 首次实测报了
       `content.some is not a function`（`render` 少了 content-block 包装），**已修**，待重启复验
-- [ ] 内置 `/` 菜单里能搜到并选中该技能 —— 需要你看一眼菜单
-- [ ] 左下角按钮点开 → 只有本插件的分组 → Escape 能关 —— 需要刷新页面后点一下
+- [ ] 在内置 `/` 菜单里能搜到并选中该技能 —— 需要你看一眼菜单
+- [ ] 左下角「技能」点开插件弹层：顶部搜索框能实时过滤、行可点选、Escape 能关 —— 需要刷新页面后点一下
 
 - [ ] 往 `localDirs` 丢一个新技能目录 → 不用重启就能搜到
 - [ ] `skill_market { action: "install" }` 装一个 GitHub 技能 → `$DSH_HOME/skills/<name>/SKILL.md` 存在 → 菜单可见
@@ -576,12 +593,93 @@ node test/smoke.js
 
 ---
 
+## 顶部搜索框与纯白底（2026-10-10）
+
+需求：弹层顶部要有搜索框（按名称 / 描述 / 标签实时过滤，空查询保持原样，查不到给友好空状态），
+并且插件的界面从不透明纯白（`#FFFFFF`）底色出发，字与图标保持对比度。
+
+结论与做法：
+
+- 截图里那个弹层是**宿主**的 `/` 触发菜单（`MenuSurface` 加一组哈希化的 CSS module 类名），插件只能往里塞行：
+  顶部插不进输入框，底色也是全应用共享的材质。所以「技能」按钮改成打开**插件自绘弹层**
+  （`conversation.input.overlay` 槽，与宿主菜单同一处锚点），输入框里手打 `/` 的菜单保持原样。
+- 三处界面共用一套过滤：`skillTags()` 把行上本来带的语义拼成可搜文本——来源、`tag.installed`（本插件安装）、
+  `tag.readonly`（只读）、`tag.menuOn` / `tag.menuOff`、`tag.modelOn` / `tag.modelOff`、`tag.userOnly`；
+  `skillHaystack()` 再把名称与描述拼进去。`filterSkills()` 是唯一入口，空查询原样返回，因此弹层保住了
+  "最近使用优先、取前 10"的排序，面板保住了筛选 chip，两边不会各搜一套。
+- 纯白底与对比度：面板在 `.dshSkillPanel_panel` 作用域内**把浅色 token 钉死**
+  （`--dsw-alias-label-*`、`--dsw-alias-border-l*`、`--dsw-alias-interactive-bg-hover`、
+  `--dsw-alias-bg-module-platform`、两个 state 色），再 `background:#FFFFFF` 并去掉 `backdrop-filter`；
+  弹层样式全部写死、不引用主题 token。两者在深色主题下同样是白底深字。
+- 弹层交互：打开即聚焦搜索框（`preventScroll`），↑↓ 选择、Enter 使用、Esc 关闭；点击弹层之外或点回编辑器即关闭，
+  关闭时把焦点交还 composer 的 `contenteditable`。选中走的是与面板同一条插入通道
+  （`captureInsertion` + `insertText`），只有失败才退回剪贴板并在弹层里说明原因。
+- 新增 `test/client-render.js`（并接进 CI）盯着这条链路，见「开发」一节。
+
+---
+
+## 技能重命名与中文显示名（2026-10-10）
+
+需求（先后两条）：面板里能给技能改名，改名后**永久保留原名**（曾用名），列表同时显示当前名称与原名，
+搜索按两者都能命中，旧名仍能找到该技能，改名要有校验，不能影响现有技能的调用与展示；
+随后明确：**要能把技能名改成中文**。
+
+结论与做法：
+
+- **中文名不能写进 `name:`（平台硬限制）**。`@deepseek-ai/dsh-skill` 里
+  `SKILL_NAME = /^[a-z0-9]+(?:-[a-z0-9]+)*$/`，注册表在三处校验它：provider 返回的候选名（`validateCandidate`，
+  非法名字会让**整个观测**被拒绝）、载入的定义名、`skills.get()` 的名字；内置 `dsh-skill-filesystem` 用同一套，
+  并在文件解析阶段就把非法名忽略掉。所以中文 `name:` 的结果是技能从菜单、`skill` 工具与模型目录里消失。
+  因此本插件把名称拆成两个：**技术名**（`name`，kebab-case，唯一能被调用的）与**显示名**（`display-name`，
+  任意文字含中文，面板/弹层/`/` 菜单标签用它）。
+- **改名是真的改名**（技术名）：技能身份由 `SKILL.md` 的 frontmatter `name` 决定，所以 `renameSkill` 同时移动目录
+  （`<root>/<旧名>/SKILL.md` → `<root>/<新名>/SKILL.md`，平铺的 `<旧名>.md` 同理）并改写 frontmatter；
+  文件不在标准位置（用户手工摆放）时只改 frontmatter，不搬文件。只给显示名时**不动文件、不动 `name`**。
+- **记录写在技能自己身上，没有第二份存储**。frontmatter 多三个键：
+  - `display-name`：当前显示名（可清空）；
+  - `original-name`：首次改名时写入，此后永不修改（`rewriteNameAndAliases` 只在被要求时改写它，不会删除）；
+  - `aliases`：交出去的名字（技术名与显示名混排），最旧在前，每次改名追加；唯一的"移除"是某个名字又变回
+    当前名称时从列表里移出（它已经是当前名称，不能同时是自己的曾用名）。
+  好处是记录跟着技能走、跟着 zip/目录复制走、卸载插件也不丢；代价是改名必须写文件，
+  所以只对本插件可写的来源（安装目录 + `localDirs`）开放，内置/项目技能照旧只读。
+- **旧的技术名仍可调用**：provider 在发现阶段把每个曾用名发布成**别名条目**（`aliasOf` 指向当前名称，
+  `rank` 固定 900——比平台 rank 表里任何真实来源都差），`get()` 对别名条目返回**被问的那个名字**并附上同一份正文，
+  因为注册表会核对"载入的定义是否带着候选的名字"（`dsh-skill` 的 `definition.name !== candidate.name` 检查）。
+  rank 900 保证别名永远不会抢占同名真实技能。`aliasEntries: false` 可整体关掉这些条目，
+  此时旧名只在插件自己的面板/弹层里可搜。别名条目在每个探索周期只发布一次，且跳过已被真实技能占用的名字。
+  **显示名一律不发布**：用 `isSkillName(alias)` 过滤，否则一个中文条目就会让 provider 的观测被注册表拒绝。
+- **列表不重复**：`manager.list()` 先读一份 provider 目录建索引（`readRenameIndex`：当前名 → 曾用名、曾用名 → 当前名、
+  当前名 → 显示名），再按索引跳过别名行、把 `previousNames` 与 `displayName` 挂到真正的行上。因此面板/弹层永远一技能一行，
+  而搜索（`skillHaystack` 把两个名字、描述、标签、曾用名并成一份 haystack）与详情（显示名 + `/技术名` 标签 + 「原名 X」徽标）
+  都拿得到两边的信息。
+- **显示名怎么露出**：面板与弹层直接画 `display-name`（`skillLabel()`），旁边固定保留 `/技术名` 标签；
+  `/` 菜单那一组走宿主菜单的 `label` 字段（`item.label ?? item.name`，查询同时匹配 label），
+  所以打 `/` 时中文名可见、可搜，选中后落进输入框的仍是 `/技术名 `（`onPick` 只认技术名）。
+  模型的技能目录与 `skill` 工具按注册表的 `name` 呈现，插件改不了，这一点在 README 里写明了。
+- **校验**：技术名——非空、kebab-case（`/^[a-z0-9]+(?:-[a-z0-9]+)*$/`，与注册表一致）、`SKILL_NAME_MAX = 64`、
+  不与自己相同、不与任何其他技能的名称/显示名/曾用名冲突；显示名——`DISPLAY_NAME_MAX = 40`、单行（拒绝控制字符）、
+  同样不许与其他技能的名称/显示名/曾用名重复。前端 `renameProblem()` / `displayProblem()` 先判一遍，
+  宿主 `renameSkill()` 再判一遍（还会检查目标是可写文件、目标路径不存在）。
+- **使用记录跟着走**：技术名变化时 `usage.json` 的键从旧名迁到新名（取两者较大的时间戳），
+  菜单的"最近使用"排序不会因改名丢失；只改显示名时不动使用记录。
+- 兼容性：从未改名、也没设过显示名的技能**不带这些键**，与改动前完全一致；`name` / `description` / `whenToUse` / 正文 /
+  已有策略键的行序都不动（`rewriteNameAndAliases` 只替换它认识的那几行，其余原样保留）。删除技能会一并带走记录。
+
+涉及的文件：`lib/skill-file.js`（`parseNameList` / `previousNamesOf` / `rewriteNameAndAliases` / `topLevelKey`、
+`DISPLAY_KEY` 与 `DISPLAY_NAME_MAX`、解析时读出三个键）、
+`lib/manage.js`（`renameSkill` 同时处理两个名字 / `assertNameFree` / `relocate` / `writeAtomic` / `migrateUsage` /
+`readRenameIndex`、list 合并别名行并附显示名）、`lib/provider.js`（别名条目 + 候选携带 `displayName`）、
+`index.js`（路由 `rename`、命令 `rename`、工具动作 `rename` 的 `newName`/`displayName`、配置 `aliasEntries`）、
+`client.js`（「改中文名」按钮与两栏表单、`displayProblem`、`skillLabel`、原名徽标、搜索覆盖两个名字与曾用名）。
+
+---
+
 ## 已知限制
 
 - **`skillMarket` 服务在本机不会发布**：它需要 `@deepseek-ai/cordis` 的 `Service` 基类，而该 specifier 在 profile 里解析不到（已实测）。插件会打一条 info 跳过，provider 和 `skill_market` 工具都不受影响。要让它生效，只能让 DSH 自己提供这个 specifier。
 - **没有 `defineTool` 的参数校验**：工具用手写原生 definition，参数校验由 `normalizeAction` 自己兜（只校验 `action`，其余参数按需读取）。**另外 `render` 必须自己返回 content-block 数组**，宿主不会再包一层。`defineTool` 未来若可用，建议换回去。
 - **`conversation.input.left` 是 list 槽**，同一个 `priority` 下 `id` 必须唯一。如果你还装了别的往这里放按钮的插件，不冲突；`priority` 相同会直接抛错。
-- **编程式打开菜单依赖 `toggleSource`**：宿主里唯一调用它的是 composer 自带的菜单按钮，而那条路径传入的是真实编辑器选区。本插件传一个合成 hit（`position: 'leading'`、空 span）。如果本版本不接受合成 hit，表现为点击按钮后菜单打开但**选中行不生效**——此时用 `/` 菜单（功能完全一致），或改成在 `conversation.composer.dock` 里自绘面板。**这一条还没验证过**。
+- **按钮不再走 `toggleSource`（2026-10-10 起）**：左下角「技能」打开的是插件自绘弹层，宿主菜单只负责输入框里手打 `/` 的那条路。因此早先担心过的"合成 hit 导致选中行不生效"不再适用于按钮；弹层另有两条宿主 DOM 依赖，都很轻：位置取自 `.overlayAnchor`、点击外部与交还焦点用 `[data-composer-card]` 和其中的 `[contenteditable="true"]`，找不到时静默降级（只是不抢/不还焦点）。
 - **同名技能在不同子目录里会被去重**：仓库同时发布 `.dsh/skills/<n>/` 和 `skills/<n>/` 时，
   目录里只留一个（按路径排序第一个），另一个会打一行 progress 说明。因为安装是按技能名落盘的，
   两个同名条目必然有一个装不上。
@@ -604,10 +702,23 @@ node test/smoke.js
 ```sh
 node --check index.js client.js lib/*.js   # 语法
 node test/smoke.js                          # 不需要网络：解析、发现、裁决
+node test/rename.js                         # 不需要 Harness：重命名的全部行为
+node test/client-render.js                  # 客户端半边：加载、激活、三处界面各渲染一次
 node test/panel-logic.js                    # 不需要 Harness：面板读写的 host 侧逻辑
 node test/marketplace-live.js               # 真连 GitHub，验证目录/搜索/安装/卸载全链路
 node test/marketplace-live.js NanmiCoder/dsh-agent-teams   # 换一个仓库再跑
 ```
+
+`test/rename.js` 在一份临时安装根上跑完改名的每条路径：目录布局与平铺布局的物理移动、frontmatter 四个键
+（`name` / `display-name` / `original-name` / `aliases`）的写入与追加、只改显示名时不动文件、一次调用同时改两个名字、
+重命名回原名时别名列表的变化、校验拒绝（空、非 kebab、中文技术名、超 64、超 40 的显示名、多行显示名、重名、
+占用别人的显示名或曾用名、越权路径）、使用记录迁移，以及 provider 发布的别名条目
+（`aliasOf` / rank 900 / `get()` 返回被问的名字 / **中文名绝不出现在候选名里**）与 `manager.list()` 不重复列行。
+
+`test/client-render.js` 用一个几十行的 React 替身把 `client.js` 装进 Node：跑一遍 `apply()`，
+确认三处界面都注册上、每个 `effect` 都返回了清理函数，然后把弹层与管理面板各渲染几遍
+（空查询的短名单、按名称 / 描述 / 标签的查询、查不到时的空状态），断言渲染结果里的行与文案。
+它守的是那条最贵的线：**客户端半边出问题会让整个应用起不来**。
 
 `test/panel-logic.js` 覆盖面板真正依赖的四件事：list 载荷的形状与标注、
 隐藏后 discovery 立刻少一个、取消隐藏后回来、整目录安装落盘并被 provider 发现。

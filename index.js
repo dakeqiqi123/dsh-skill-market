@@ -59,6 +59,7 @@ export const inject = ['skills']
  * @property {string[]} [sources] - curated `owner/repo[#ref]` sources.
  * @property {string} [token] - GitHub token; empty falls back to the environment.
  * @property {boolean} [registerTool] - register the `skill_market` tool.
+ * @property {boolean} [aliasEntries] - offer a renamed skill under its previous names too.
  */
 
 /** Defaults for every configuration key. */
@@ -69,6 +70,7 @@ export const DEFAULTS = {
   sources: [],
   token: '',
   registerTool: true,
+  aliasEntries: true,
 }
 
 /** Row id this plugin's patch inserts, used to address its own config for edits. */
@@ -92,7 +94,7 @@ export function apply(ctx, config = {}) {
   const localDirs = (settings.localDirs ?? []).map((entry) => resolve(entry))
   const roots = buildRoots({ localDirs, installRoot, rank: settings.rank })
 
-  const provider = new MarketSkillProvider({ ctx, roots })
+  const provider = new MarketSkillProvider({ ctx, roots, aliasEntries: settings.aliasEntries !== false })
   ctx.skills.registerProvider(() => provider)
 
   const sources = (settings.sources ?? []).filter((spec) => typeof spec === 'string' && spec.trim() !== '')
@@ -215,6 +217,8 @@ async function dispatchRoute(action, body, wiring) {
       return await wiring.manager.list()
     case 'policy':
       return await wiring.manager.setInvocation(body)
+    case 'rename':
+      return await wiring.manager.renameSkill({ path: body.path, name: body.name, displayName: body.displayName })
     case 'touch':
       return await wiring.manager.recordUse({ name: body.name })
     case 'install-dir':
@@ -241,7 +245,7 @@ async function dispatchRoute(action, body, wiring) {
       return await removeSkill(wiring, body.name)
     default:
       throw new Error(
-        `unknown action ${JSON.stringify(action)}; expected list, policy, touch, install-dir, install-zip, install-text, install-repo or remove`,
+        `unknown action ${JSON.stringify(action)}; expected list, policy, rename, touch, install-dir, install-zip, install-text, install-repo or remove`,
       )
   }
 }
@@ -272,8 +276,9 @@ function registerPanelCommands(ctx, wiring) {
       () =>
         commandCtx.commands.register({
           name: 'skill-market',
-          description: 'Manage skills: list / install / add-dir / add-zip / add-text / policy / touch / remove',
-          input: { hint: '<list|install|add-dir|add-zip|add-text|policy|touch|remove> [arguments]' },
+          description:
+            'Manage skills: list / install / add-dir / add-zip / add-text / policy / rename / touch / remove',
+          input: { hint: '<list|install|add-dir|add-zip|add-text|policy|rename|touch|remove> [arguments]' },
           handler: async ({ rawInput }) => {
             try {
               const parts = String(rawInput ?? '').trim().split(/\s+/)
@@ -295,6 +300,8 @@ function registerPanelCommands(ctx, wiring) {
                   return reply(await wiring.manager.installText({ text: decodeText(rest.join(' ')) }))
                 case 'policy':
                   return reply(await wiring.manager.setInvocation(decodeJson(rest.join(' '))))
+                case 'rename':
+                  return reply(await wiring.manager.renameSkill(decodeJson(rest.join(' '))))
                 case 'touch':
                   return reply(await wiring.manager.recordUse({ name: rest.join(' ') }))
                 case 'remove':
@@ -384,25 +391,36 @@ function registerTool(toolCtx, wiring) {
           'hold; "catalog" lists the curated sources and their skills; "search" finds skills in a repository; ' +
           '"install" downloads one SKILL.md from a repository; "install-dir" mounts every skill found in a local ' +
           'folder; "install-text" writes a pasted SKILL.md; "policy" flips whether the menu and the model may use ' +
-          'a skill; "remove" deletes a skill this plugin installed. Installations write to disk and take effect ' +
-          'immediately.',
+          'a skill; "rename" changes a skill\'s technical name (kebab-case, the one it is called by) and/or its ' +
+          'display name (free text, usually Chinese) and keeps every name it carried as a permanent alias; ' +
+          '"remove" deletes a skill this plugin installed. Installations write to disk and take effect immediately.',
         parameters: {
           type: 'object',
           additionalProperties: false,
           properties: {
             action: {
               type: 'string',
-              enum: ['list', 'local', 'catalog', 'search', 'install', 'install-dir', 'install-text', 'policy', 'remove'],
-              description: 'One of: list, local, catalog, search, install, install-dir, install-text, policy, remove.',
+              enum: ['list', 'local', 'catalog', 'search', 'install', 'install-dir', 'install-text', 'policy', 'rename', 'remove'],
+              description: 'One of: list, local, catalog, search, install, install-dir, install-text, policy, rename, remove.',
             },
             repo: { type: 'string', description: 'Repository as "owner/repo". Required for install.' },
             ref: { type: 'string', description: 'Commit sha or tag to install from. Defaults to the default branch.' },
-            path: { type: 'string', description: 'Repository path of a SKILL.md, or the local SKILL.md for policy.' },
+            path: { type: 'string', description: 'Repository path of a SKILL.md, or the local SKILL.md for policy and rename.' },
             directory: { type: 'string', description: 'Absolute local folder holding skills. Required for install-dir.' },
             text: { type: 'string', description: 'A whole SKILL.md document. Required for install-text.' },
-            query: { type: 'string', description: 'Search text matched against skill name and description.' },
+            query: { type: 'string', description: 'Search text matched against skill name, description and previous names.' },
             spec: { type: 'string', description: 'Ad-hoc "owner/repo[#ref]" source for search.' },
             skillName: { type: 'string', description: 'Skill name to remove.' },
+            newName: {
+              type: 'string',
+              description: 'New kebab-case technical name for rename. The old name is kept as an alias and stays callable.',
+            },
+            displayName: {
+              type: 'string',
+              description:
+                'New display name for rename: free text, usually Chinese. Shown in the panel, the picker and the skill menu; ' +
+                'the technical name stays what the skill is called by. An empty string clears it.',
+            },
             modelInvocable: { type: 'boolean', description: 'Whether the model may call the skill. For policy.' },
             userInvocable: { type: 'boolean', description: 'Whether the skill appears in the user menu. For policy.' },
           },
@@ -455,6 +473,12 @@ function registerTool(toolCtx, wiring) {
                 modelInvocable: args.modelInvocable,
                 userInvocable: args.userInvocable,
               })
+            case 'rename':
+              return await wiring.manager.renameSkill({
+                path: args.path,
+                name: args.newName,
+                displayName: args.displayName,
+              })
             case 'remove':
               return await market.remove({ name: args.skillName })
             /* c8 ignore next 2 -- normalizeAction rejects every other value first */
@@ -482,6 +506,7 @@ const ACTIONS = new Set([
   'install-dir',
   'install-text',
   'policy',
+  'rename',
   'remove',
 ])
 

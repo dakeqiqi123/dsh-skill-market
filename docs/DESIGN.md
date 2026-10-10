@@ -2,7 +2,8 @@
 
 > **这是立项时的设计笔记，保留原始内容以便追溯。**
 > 其中记录的扩展点取证（slot 名、provider 契约、rank 档位、client API）仍是理解本插件的最好入口；
-> 但实现已经超出本文的规划——自绘的集市/管理面板（本文列为 P3）已经完成并发布，见 [`../README.md`](../README.md)。
+> 但实现已经超出本文的规划——自绘的集市/管理面板（本文列为 P3）、技能重命名与中文显示名都已实现并发布，
+> 见 [`../README.md`](../README.md) 的「功能」与「名称：显示名与技术名」两节。
 > 文中的 `<APP>`、`<APP-DATA>`、`%APPDATA%`、`$DSH_HOME`、`%USERPROFILE%`、`<WORKSPACE>` 等占位符，
 > 含义与 [`DEVNOTES.md`](./DEVNOTES.md) 一致。
 

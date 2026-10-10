@@ -51,7 +51,7 @@ window.__ModuleLoader__.load({
       'menu.manageHint': '浏览、搜索全部技能；双击即用',
       'panel.title': '技能管理',
       'panel.close': '关闭',
-      'panel.search': '搜索技能',
+      'panel.search': '搜索名称、描述或标签',
       'panel.refresh': '刷新',
       'panel.filter.all': '全部',
       'panel.filter.installed': '本插件安装',
@@ -68,6 +68,9 @@ window.__ModuleLoader__.load({
       'panel.readonlyHint': '这个来源的技能不能被本插件修改或删除',
       'panel.loading': '正在读取技能…',
       'panel.empty': '没有匹配的技能',
+      'panel.emptyQuery': '没有找到与「{query}」匹配的技能',
+      'panel.emptyHint': '换个关键词或筛选条件试试',
+      'panel.clearSearch': '清空搜索',
       'panel.error': '读取失败：{message}',
       'panel.foot': '共 {count} 个技能 · 已装 {installed} 个 · 安装目录 {root}',
       'panel.updated': '刚刚更新',
@@ -94,6 +97,44 @@ window.__ModuleLoader__.load({
       'panel.installed': '已安装 {names}',
       'panel.skipped': '跳过 {count} 个（已存在或缺少必要字段）',
       'panel.failed': '失败 {count} 个',
+      'picker.search': '搜索技能名称、描述或标签',
+      'picker.emptyQuery': '没有找到与「{query}」匹配的技能',
+      'picker.emptyHint': '换个关键词，或清空搜索框查看全部技能',
+      'picker.clear': '清空',
+      'picker.keys': '↑↓ 选择 · Enter 使用 · Esc 关闭',
+      'picker.count': '共 {count} 个技能',
+      'picker.clipboardFailed': '无法写入输入框，也无法访问剪贴板，请手动输入 {token}',
+      'tag.installed': '本插件安装',
+      'tag.readonly': '只读',
+      'tag.userOnly': '仅用户可调用',
+      'tag.menuOn': '菜单可见',
+      'tag.menuOff': '菜单不可见',
+      'tag.modelOn': '模型可用',
+      'tag.modelOff': '模型不可用',
+      'panel.rename': '改中文名',
+      'panel.renameTitle': '修改技能名称',
+      'panel.renameCurrent': '当前名称：{name}',
+      'panel.renameLabel': '新名称（kebab-case）',
+      'panel.renameHint': '显示名可以是中文，出现在面板、弹层与技能菜单里；调用用的技术名仍是 kebab-case。此前的名称会永久保留为曾用名，仍能搜到。',
+      'panel.renameEmpty': '名称不能为空',
+      'panel.renameSame': '这与当前名称相同',
+      'panel.renameInvalid': '只能用小写字母、数字和连字符，例如 audit-report-review',
+      'panel.renameTooLong': '名称最长 {max} 个字符',
+      'panel.renameTaken': '「{name}」已经被另一个技能使用',
+      'panel.renameAliasTaken': '「{name}」是另一个技能的曾用名，仍然为它保留',
+      'panel.renameSave': '保存',
+      'panel.renamed': '已更新为 {name}',
+      'panel.displayLabel': '显示名（可用中文）',
+      'panel.displayHint': '面板、弹层与技能菜单里显示的就是它；留空则显示技术名',
+      'panel.displayTooLong': '显示名最长 {max} 个字符',
+      'panel.displayInvalid': '显示名不能包含换行或控制字符',
+      'panel.displayTaken': '「{name}」已经被另一个技能占用',
+      'panel.techLabel': '技术名（kebab-case，用于调用）',
+      'panel.techHint': '留空表示不改；`/名称` 调用令牌用的始终是技术名',
+      'panel.identityNothing': '名称没有变化',
+      'panel.formerName': '原名 {name}',
+      'panel.formerNameMore': '原名 {name} +{count}',
+      'panel.formerAll': '曾用名：{names}',
     }
     const en = {
       'button.label': 'Skills',
@@ -105,7 +146,7 @@ window.__ModuleLoader__.load({
       'menu.manageHint': 'Browse and search every skill; double-click to use',
       'panel.title': 'Skills',
       'panel.close': 'Close',
-      'panel.search': 'Search skills',
+      'panel.search': 'Search name, description or tag',
       'panel.refresh': 'Refresh',
       'panel.filter.all': 'All',
       'panel.filter.installed': 'Installed here',
@@ -122,6 +163,9 @@ window.__ModuleLoader__.load({
       'panel.readonlyHint': 'This source cannot be modified or removed here',
       'panel.loading': 'Reading skills…',
       'panel.empty': 'No matching skill',
+      'panel.emptyQuery': 'No skill matches “{query}”',
+      'panel.emptyHint': 'Try another keyword or filter',
+      'panel.clearSearch': 'Clear search',
       'panel.error': 'Read failed: {message}',
       'panel.foot': '{count} skill(s) · {installed} installed here · install root {root}',
       'panel.updated': 'updated just now',
@@ -148,6 +192,45 @@ window.__ModuleLoader__.load({
       'panel.installed': 'installed {names}',
       'panel.skipped': 'skipped {count} (already present or missing fields)',
       'panel.failed': 'failed {count}',
+      'picker.search': 'Search name, description or tag',
+      'picker.emptyQuery': 'No skill matches “{query}”',
+      'picker.emptyHint': 'Try another keyword, or clear the box to see every skill',
+      'picker.clear': 'Clear',
+      'picker.keys': '↑↓ move · Enter use · Esc close',
+      'picker.count': '{count} skill(s)',
+      'picker.clipboardFailed': 'Could not insert the skill, and the clipboard is unavailable — type {token} yourself',
+      'tag.installed': 'installed here',
+      'tag.readonly': 'read-only',
+      'tag.userOnly': 'user-only',
+      'tag.menuOn': 'in menu',
+      'tag.menuOff': 'hidden from menu',
+      'tag.modelOn': 'model can use',
+      'tag.modelOff': 'model cannot use',
+      'panel.rename': 'Rename',
+      'panel.renameTitle': 'Change what this skill is called',
+      'panel.renameCurrent': 'Current name: {name}',
+      'panel.renameLabel': 'New name (kebab-case)',
+      'panel.renameHint':
+        'The display name may be any text, Chinese included, and is what the panel, the picker and the skill menu show. The technical name, in kebab-case, stays what the skill is called by. Previous names are kept and stay searchable.',
+      'panel.renameEmpty': 'The name must not be empty',
+      'panel.renameSame': 'That is already this skill’s name',
+      'panel.renameInvalid': 'Use lower-case letters, digits and hyphens only, for example audit-report-review',
+      'panel.renameTooLong': 'The name may be at most {max} characters',
+      'panel.renameTaken': '“{name}” is already used by another skill',
+      'panel.renameAliasTaken': '“{name}” is a name another skill carried before and is kept for it',
+      'panel.renameSave': 'Save',
+      'panel.renamed': 'updated to {name}',
+      'panel.displayLabel': 'Display name (Chinese is fine)',
+      'panel.displayHint': 'What the panel, the picker and the skill menu show; empty falls back to the technical name',
+      'panel.displayTooLong': 'A display name may be at most {max} characters',
+      'panel.displayInvalid': 'A display name must be one line without control characters',
+      'panel.displayTaken': '“{name}” is already taken by another skill',
+      'panel.techLabel': 'Technical name (kebab-case, used to call it)',
+      'panel.techHint': 'Leave empty to keep it; the `/name` token always uses the technical name',
+      'panel.identityNothing': 'Nothing changed',
+      'panel.formerName': 'formerly {name}',
+      'panel.formerNameMore': 'formerly {name} +{count}',
+      'panel.formerAll': 'previous names: {names}',
     }
 
     /** Composer button styles. */
@@ -181,7 +264,11 @@ window.__ModuleLoader__.load({
     const PANEL_TAG_ID = 'dsh-skill-market/panel.css'
     const panelCss = [
       '.dshSkillPanel_scrim{position:fixed;inset:0;background:var(--dsw-alias-bg-mask,rgba(0,0,0,.35));display:flex;align-items:flex-start;justify-content:center;padding:48px 24px;z-index:1200}',
-      '.dshSkillPanel_panel{box-sizing:border-box;display:flex;flex-direction:column;width:min(880px,100%);max-height:min(720px,100%);border-radius:var(--dsw-radius-lg);background:var(--dsw-specific-menu);backdrop-filter:var(--dsw-menu-backdrop-filter);box-shadow:var(--dsw-elevation-prominent);border:.5px solid var(--dsw-alias-border-l1);color:var(--dsw-alias-label-primary);overflow:hidden;font-family:var(--dsw-font-family)}',
+      // The panel paints its own opaque surface: it is the plugin's own card, not a
+      // borrowed translucent menu material. Pinning the light colour tokens inside
+      // this scope keeps text, icons and controls readable even when the rest of
+      // the application runs a dark theme.
+      '.dshSkillPanel_panel{--dsw-alias-label-primary:#1B1B1F;--dsw-alias-label-secondary:#4A4A52;--dsw-alias-label-tertiary:#85858F;--dsw-alias-label-inverse:#FFFFFF;--dsw-alias-border-l1:#E3E3E8;--dsw-alias-border-l2:#EDEDF0;--dsw-alias-interactive-bg-hover:#F2F2F5;--dsw-alias-bg-module-platform:#F7F7F9;--dsw-alias-state-error-primary:#C62828;--dsw-alias-state-business-primary:#2B6CF6;--dsw-specific-menu:#FFFFFF;box-sizing:border-box;display:flex;flex-direction:column;width:min(880px,100%);max-height:min(720px,100%);border-radius:var(--dsw-radius-lg);background:#FFFFFF;box-shadow:var(--dsw-elevation-prominent);border:.5px solid var(--dsw-alias-border-l1);color:var(--dsw-alias-label-primary);overflow:hidden;font-family:var(--dsw-font-family)}',
       '.dshSkillPanel_head{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:.5px solid var(--dsw-alias-border-l2);flex:none}',
       '.dshSkillPanel_title{font-size:15px;font-weight:600;line-height:22px;flex:none}',
       '.dshSkillPanel_search{flex:auto;min-width:120px}',
@@ -206,13 +293,18 @@ window.__ModuleLoader__.load({
       '.dshSkillPanel_name{font-size:13px;line-height:20px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}',
       '.dshSkillPanel_desc{font-size:12px;line-height:18px;color:var(--dsw-alias-label-tertiary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}',
       '.dshSkillPanel_tag{font-size:11px;line-height:16px;padding:1px 6px;border-radius:999px;background:var(--dsw-alias-interactive-bg-hover);color:var(--dsw-alias-label-tertiary);flex:none;white-space:nowrap}',
+      // The invocation token, kept visible beside a display name: `/name` is what a
+      // person has to type, and it is deliberately not translated or hidden.
+      '.dshSkillPanel_tech{font-family:var(--dsw-font-family-mono,monospace);color:var(--dsw-alias-label-secondary)}',
       '.dshSkillPanel_actions{display:flex;gap:10px;align-items:center;flex:none}',
       '.dshSkillPanel_switch{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--dsw-alias-label-secondary);cursor:pointer;white-space:nowrap}',
       '.dshSkillPanel_switch input{accent-color:var(--dsw-alias-state-business-primary);margin:0}',
       '.dshSkillPanel_foot{padding:10px 16px;border-top:.5px solid var(--dsw-alias-border-l2);font-size:12px;line-height:18px;color:var(--dsw-alias-label-tertiary);flex:none;display:flex;gap:10px;justify-content:space-between;flex-wrap:wrap}',
       '.dshSkillPanel_err{color:var(--dsw-alias-state-error-primary);font-size:12px;line-height:18px;padding:8px 16px;flex:none;word-break:break-word}',
       '.dshSkillPanel_ok{color:var(--dsw-alias-label-secondary);font-size:12px;line-height:18px;padding:8px 16px;flex:none;word-break:break-word}',
-      '.dshSkillPanel_empty{padding:32px 16px;text-align:center;color:var(--dsw-alias-label-tertiary);font-size:13px}',
+      '.dshSkillPanel_empty{display:flex;flex-direction:column;align-items:center;gap:8px;padding:32px 16px;text-align:center;color:var(--dsw-alias-label-tertiary);font-size:13px}',
+      '.dshSkillPanel_emptyTitle{color:var(--dsw-alias-label-secondary);font-size:13px;line-height:20px;word-break:break-word}',
+      '.dshSkillPanel_emptyHint{color:var(--dsw-alias-label-tertiary);font-size:12px;line-height:18px}',
       '.dshSkillPanel_sub{border-bottom:.5px solid var(--dsw-alias-border-l2);padding:12px 16px;display:flex;flex-direction:column;gap:8px;flex:none}',
       '.dshSkillPanel_subTitle{font-size:13px;font-weight:500;line-height:20px}',
       '.dshSkillPanel_subHint{font-size:12px;line-height:18px;color:var(--dsw-alias-label-tertiary)}',
@@ -226,6 +318,50 @@ window.__ModuleLoader__.load({
       tag.dataset.plugin = 'dsh-skill-market'
       tag.dataset.pluginCss = PANEL_TAG_ID
       tag.textContent = panelCss
+      document.head.appendChild(tag)
+    }
+
+    /**
+     * Picker styles.
+     *
+     * This popup paints its own opaque white surface with fixed colours instead of
+     * theme tokens: it sits inside the composer over whatever the application theme
+     * is showing, so the card stays white and its text stays dark in either theme.
+     */
+    const PICKER_TAG_ID = 'dsh-skill-market/picker.css'
+    const pickerCss = [
+      '.dshSkillPicker_popup{box-sizing:border-box;position:absolute;bottom:calc(100% + 4px);left:0;right:0;z-index:101;display:flex;flex-direction:column;max-height:400px;overflow:hidden;border:.5px solid #E3E3E8;border-radius:var(--dsw-radius-lg);background:#FFFFFF;box-shadow:var(--dsw-elevation-prominent);color:#1B1B1F;font-family:var(--dsw-font-family)}',
+      '.dshSkillPicker_search{display:flex;align-items:center;gap:8px;padding:8px 10px;border-bottom:.5px solid #EDEDF0;flex:none}',
+      '.dshSkillPicker_input{box-sizing:border-box;flex:auto;min-width:0;height:30px;padding:0 10px;border-radius:var(--dsw-radius-md);border:.5px solid #E3E3E8;background:#F7F7F9;color:#1B1B1F;font-family:inherit;font-size:13px}',
+      '.dshSkillPicker_input::placeholder{color:#8A8A94}',
+      '.dshSkillPicker_input:focus-visible{outline:var(--dsw-focus-ring-width,2px) solid #2B6CF6;outline-offset:-2px}',
+      '.dshSkillPicker_clear{height:26px;padding:0 8px;border:0;border-radius:var(--dsw-radius-md);background:#F1F1F4;color:#4A4A52;font-family:inherit;font-size:12px;cursor:pointer;flex:none}',
+      '.dshSkillPicker_clear:hover{background:#E7E7EC}',
+      '.dshSkillPicker_viewport{display:flex;flex-direction:column;gap:2px;padding:6px;overflow-y:auto;flex:auto;min-height:0}',
+      '.dshSkillPicker_row{display:flex;align-items:center;gap:8px;width:100%;min-height:34px;padding:6px 8px;border:0;border-radius:var(--dsw-radius-md);background:0 0;color:#1B1B1F;font-family:inherit;font-size:13px;line-height:20px;text-align:left;cursor:pointer}',
+      '.dshSkillPicker_row:hover{background:#F7F7F9}',
+      '.dshSkillPicker_row[aria-selected="true"]{background:#F1F1F4}',
+      '.dshSkillPicker_row:focus-visible{outline:var(--dsw-focus-ring-width,2px) solid #2B6CF6;outline-offset:-2px}',
+      '.dshSkillPicker_glyph{display:grid;place-items:center;width:14px;height:14px;flex:none;color:#8A8A94;font-size:12px}',
+      '.dshSkillPicker_name{flex:none;max-width:46%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:500}',
+      '.dshSkillPicker_tag{flex:none;padding:1px 6px;border-radius:999px;background:#F1F1F4;color:#6B6B75;font-size:11px;line-height:16px;white-space:nowrap;max-width:32%;overflow:hidden;text-overflow:ellipsis}',
+      '.dshSkillPicker_tech{font-family:var(--dsw-font-family-mono,monospace);color:#4A4A52;background:#F7F7F9}',
+      '.dshSkillPicker_desc{min-width:0;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:right;color:#8A8A94;font-size:12px;line-height:18px}',
+      '.dshSkillPicker_empty{display:flex;flex-direction:column;align-items:center;gap:8px;padding:24px 16px;text-align:center}',
+      '.dshSkillPicker_emptyTitle{color:#4A4A52;font-size:13px;line-height:20px;word-break:break-word}',
+      '.dshSkillPicker_emptyHint{color:#8A8A94;font-size:12px;line-height:18px}',
+      '.dshSkillPicker_note{color:#4A4A52;font-size:12px;line-height:18px;padding:4px 10px;flex:none;word-break:break-word}',
+      '.dshSkillPicker_err{color:#C62828;font-size:12px;line-height:18px;padding:4px 10px;flex:none;word-break:break-word}',
+      '.dshSkillPicker_foot{display:flex;justify-content:space-between;gap:10px;padding:8px 10px;border-top:.5px solid #EDEDF0;color:#8A8A94;font-size:11px;line-height:16px;flex:none}',
+    ].join('')
+
+    function ensurePickerStyles() {
+      if (typeof document === 'undefined') return
+      if (document.querySelector('style[data-plugin-css=' + JSON.stringify(PICKER_TAG_ID) + ']') !== null) return
+      const tag = document.createElement('style')
+      tag.dataset.plugin = 'dsh-skill-market'
+      tag.dataset.pluginCss = PICKER_TAG_ID
+      tag.textContent = pickerCss
       document.head.appendChild(tag)
     }
 
@@ -310,6 +446,190 @@ window.__ModuleLoader__.load({
     }
 
     /**
+     * Every label a row already carries, as text a search may match: the source
+     * chip, the installed and read-only chips, the two availability states, and the
+     * names the skill carried before a rename. Some of these are drawn and some only
+     * implied by a switch, so matching them makes "只读" or "菜单不可见" findable
+     * without widening any row.
+     *
+     * @param t - translator bound to this plugin's namespace.
+     * @param skill - one listing entry.
+     * @returns the tag strings for that skill.
+     */
+    function skillTags(t, skill) {
+      const tags = [String(skill.source ?? '')]
+      if (skill.installed === true) tags.push(t('tag.installed'))
+      if (skill.writable !== true || skill.path === undefined) tags.push(t('tag.readonly'))
+      tags.push(skill.userInvocable === false ? t('tag.menuOff') : t('tag.menuOn'))
+      tags.push(skill.modelInvocable === false ? t('tag.modelOff') : t('tag.modelOn'))
+      if (skill.modelInvocable === false) tags.push(t('tag.userOnly'))
+      // Previous names are searched exactly like the current one, which is what
+      // keeps an old habit pointing at the same skill.
+      for (const previous of skill.previousNames ?? []) tags.push(String(previous))
+      return tags
+    }
+
+    /** One lower-cased haystack per skill: both names, the description and the tags. */
+    function skillHaystack(t, skill) {
+      return [
+        String(skill.name ?? ''),
+        String(skill.displayName ?? ''),
+        String(skill.description ?? ''),
+        ...skillTags(t, skill),
+      ]
+        .join(' ')
+        .toLowerCase()
+    }
+
+    /**
+     * Free-text filtering over name, description and tags.
+     *
+     * An empty query returns the input untouched, so every caller keeps its own
+     * ordering: the picker its recency shortlist, the panel its chip-filtered list.
+     *
+     * @param t - translator bound to this plugin's namespace.
+     * @param skills - listings to filter.
+     * @param query - what the user typed.
+     * @returns the matching subset, in the given order.
+     */
+    function filterSkills(t, skills, query) {
+      const needle = String(query ?? '').trim().toLowerCase()
+      if (needle === '') return skills
+      return skills.filter((skill) => skillHaystack(t, skill).includes(needle))
+    }
+
+    /** Recency of one skill: the later of "last used" and "installed here". */
+    const recency = (skill) => Math.max(skill.lastUsedAt ?? 0, skill.installedAt ?? 0)
+
+    /** Skill-name rules, mirroring the host's own check in `lib/skill-file.js`. */
+    const SKILL_NAME_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/
+    /** Longest name the host writes; the form refuses longer input before sending it. */
+    const SKILL_NAME_MAX = 64
+    /** Longest display name the host writes; it has to fit one menu row. */
+    const DISPLAY_NAME_MAX = 40
+
+    /**
+     * Why a display name would be refused, or undefined when it is fine.
+     *
+     * Free text, Chinese included, but bounded and on one line, and it must not be a
+     * name another skill already answers to — its technical name, its display name or
+     * anything it carried before, because all of those are searchable.
+     *
+     * @param t - translator bound to this plugin's namespace.
+     * @param options - `{ skills, path, value }`: the listing, the skill being renamed,
+     *   and what the user typed.
+     * @returns the reason to show, or undefined.
+     */
+    function displayProblem(t, { skills, path, value }) {
+      const name = String(value ?? '').trim()
+      if (name === '') return undefined
+      if (name.length > DISPLAY_NAME_MAX) return t('panel.displayTooLong', { max: DISPLAY_NAME_MAX })
+      if (/[\u0000-\u001f\u007f]/.test(name)) return t('panel.displayInvalid')
+      for (const skill of skills) {
+        if (skill.path !== undefined && skill.path === path) continue
+        if (skill.name === name || skill.displayName === name || (skill.previousNames ?? []).includes(name)) {
+          return t('panel.displayTaken', { name })
+        }
+      }
+      return undefined
+    }
+
+    /** What a row calls a skill: its display name when it has one, else the technical name. */
+    function skillLabel(skill) {
+      return typeof skill.displayName === 'string' && skill.displayName !== '' ? skill.displayName : String(skill.name ?? '')
+    }
+
+    /**
+     * Why a rename would be refused, or undefined when it is fine.
+     *
+     * This mirrors the host's rules so the form can answer without a round trip; the
+     * host still decides, because it also sees skills this listing may not carry.
+     *
+     * @param t - translator bound to this plugin's namespace.
+     * @param options - `{ skills, path, current, value }`: the listing, the skill
+     *   being renamed, its current name, and what the user typed.
+     * @returns the reason to show, or undefined.
+     */
+    function renameProblem(t, { skills, path, current, value }) {
+      const name = String(value ?? '').trim()
+      if (name === '') return t('panel.renameEmpty')
+      if (name === current) return t('panel.renameSame')
+      if (!SKILL_NAME_RE.test(name)) return t('panel.renameInvalid')
+      if (name.length > SKILL_NAME_MAX) return t('panel.renameTooLong', { max: SKILL_NAME_MAX })
+      for (const skill of skills) {
+        if (skill.path !== undefined && skill.path === path) continue
+        if (skill.name === name) return t('panel.renameTaken', { name })
+        if ((skill.previousNames ?? []).includes(name)) return t('panel.renameAliasTaken', { name })
+      }
+      return undefined
+    }
+
+    /**
+     * The chip a renamed skill wears, or undefined for a skill that never moved:
+     * the name it carried first, plus how many more it has been through.
+     */
+    function formerNameChip(t, skill) {
+      const previous = skill.previousNames ?? []
+      if (previous.length === 0) return undefined
+      const [first, ...rest] = previous
+      return rest.length === 0
+        ? t('panel.formerName', { name: first })
+        : t('panel.formerNameMore', { name: first, count: rest.length })
+    }
+
+    /**
+     * Per-session boolean flags with subscribers.
+     *
+     * The composer overlay renders once per mounted session, so the picker's state
+     * has to be keyed by session: one shared flag would open it in every composer
+     * at once.
+     *
+     * @returns the flag store: two readers and the subscribing hook.
+     */
+    function createSessionFlags() {
+      const flags = new Map()
+      const entryFor = (id) => {
+        const key = typeof id === 'string' ? id : ''
+        let entry = flags.get(key)
+        if (entry === undefined) {
+          entry = { open: false, listeners: new Set() }
+          flags.set(key, entry)
+        }
+        return entry
+      }
+      return {
+        isOpen: (id) => entryFor(id).open,
+        set(id, next) {
+          const entry = entryFor(id)
+          if (entry.open === next) return
+          entry.open = next
+          for (const listener of entry.listeners) listener()
+        },
+        useOpen(id) {
+          const [value, setValue] = React.useState(() => entryFor(id).open)
+          React.useEffect(() => {
+            const entry = entryFor(id)
+            setValue(entry.open)
+            const listener = () => setValue(entry.open)
+            entry.listeners.add(listener)
+            return () => {
+              entry.listeners.delete(listener)
+            }
+          }, [id])
+          return value
+        },
+      }
+    }
+
+    /** Give the keyboard back to the composer card the popup lives in. */
+    function handBackFocus(root) {
+      if (root === null || root === undefined || typeof root.closest !== 'function') return
+      const card = root.closest('[data-composer-card]')
+      const editor = card === null ? null : card.querySelector('[contenteditable="true"]')
+      if (editor instanceof HTMLElement) editor.focus({ preventScroll: true })
+    }
+
+    /**
      * The skill source.
      *
      * `onPick` produces the literal `/<name> `, the same token a user would type:
@@ -382,9 +702,6 @@ window.__ModuleLoader__.load({
         return entry.inflight
       }
 
-      /** Recency of one skill: the later of "last used" and "installed here". */
-      const recency = (skill) => Math.max(skill.lastUsedAt ?? 0, skill.installedAt ?? 0)
-
       return {
         trigger: TRIGGER,
         name: SOURCE,
@@ -412,16 +729,19 @@ window.__ModuleLoader__.load({
             rows.push({ name: t('menu.manage'), description: t('menu.manageHint'), actionId: 'manage' })
             return rows
           }
-          // A query searches every skill, so the shortlist never hides something
-          // the user is explicitly looking for.
-          for (const skill of list) {
-            if (`${skill.name} ${skill.description}`.toLowerCase().includes(needle)) rows.push(skillRow(skill))
-          }
+          // A query searches every skill — name, description and tags alike — so
+          // the shortlist can never hide something the user is looking for.
+          for (const skill of filterSkills(t, list, query)) rows.push(skillRow(skill))
           return rows
 
           function skillRow(skill) {
+            // `label` is what the host menu shows and what its query matches, so a
+            // skill with a Chinese display name is found and read in Chinese; the
+            // pick still hands the technical name to the composer.
+            const label = skillLabel(skill)
             return {
               name: skill.name,
+              ...(label === skill.name ? {} : { label }),
               description:
                 skill.modelInvocable === false ? `${t('menu.userOnly')} · ${skill.description}` : skill.description,
             }
@@ -484,6 +804,9 @@ window.__ModuleLoader__.load({
         const [repoText, setRepoText] = React.useState('')
         const [dirText, setDirText] = React.useState('')
         const [updatedAt, setUpdatedAt] = React.useState(0)
+        const [renameTarget, setRenameTarget] = React.useState(undefined)
+        const [renameText, setRenameText] = React.useState('')
+        const [displayText, setDisplayText] = React.useState('')
 
         const refresh = React.useCallback(async (options) => {
           if (options?.reveal === true) {
@@ -560,6 +883,32 @@ window.__ModuleLoader__.load({
           perform(async () => {
             const result = await callHost('remove', { name: skill.name })
             return result?.removed === true ? t('panel.updated') : String(result?.reason ?? t('panel.updated'))
+          })
+
+        /**
+         * Change what a skill is called.
+         *
+         * Two names travel in one call: the display name (free text, usually
+         * Chinese) and the technical name (kebab-case, the one `/name` resolves).
+         * Only what actually changed is sent, so a display-only edit never touches
+         * the invocation token.
+         */
+        const submitRename = () =>
+          perform(async () => {
+            const target = renameTarget
+            if (target === undefined || target.path === undefined) return undefined
+            const payload = { path: target.path }
+            const technical = renameText.trim()
+            if (technical !== '' && technical !== target.name) payload.name = technical
+            const display = displayText.trim()
+            if (display !== (target.displayName ?? '')) payload.displayName = display
+            if (payload.name === undefined && payload.displayName === undefined) return t('panel.identityNothing')
+            const result = await callHost('rename', payload)
+            setSub(undefined)
+            setRenameTarget(undefined)
+            setRenameText('')
+            setDisplayText('')
+            return t('panel.renamed', { name: String(result?.displayName ?? result?.name ?? technical) })
           })
 
         /**
@@ -650,40 +999,62 @@ window.__ModuleLoader__.load({
           }
         }
 
-        const matches = state.skills.filter((skill) => {
+        // Chips first, free text second: one pass for the filter, then the shared
+        // haystack over name, description and tags, so both surfaces search alike.
+        const byFilter = state.skills.filter((skill) => {
           if (filter === 'installed' && skill.installed !== true) return false
           if (filter === 'local' && !String(skill.source).includes('local')) return false
           if (filter === 'other' && (skill.installed === true || String(skill.source).includes('local'))) return false
           if (filter === 'writable' && skill.writable !== true) return false
-          if (query.trim() === '') return true
-          const needle = query.trim().toLowerCase()
-          return `${skill.name} ${skill.description} ${skill.source}`.toLowerCase().includes(needle)
+          return true
         })
+        const matches = filterSkills(t, byFilter, query)
 
         const installedCount = state.skills.filter((skill) => skill.installed === true).length
 
         const row = (skill) => {
           const editable = skill.writable === true && skill.path !== undefined
+          const former = formerNameChip(t, skill)
+          const previousNames = skill.previousNames ?? []
+          const named = typeof skill.displayName === 'string' && skill.displayName !== ''
           return h(
             'div',
             {
               className: 'dshSkillPanel_row',
               key: `${skill.name}@${String(skill.path)}`,
-              title: t('panel.useHint'),
+              title:
+                previousNames.length === 0
+                  ? t('panel.useHint')
+                  : `${t('panel.useHint')} · ${t('panel.formerAll', { names: previousNames.join(', ') })}`,
               onDoubleClick: () => void useSkill(skill),
             },
-            h('div', { className: 'dshSkillPanel_badge' }, initial(skill.name)),
+            h('div', { className: 'dshSkillPanel_badge' }, initial(skillLabel(skill))),
             h(
               'div',
               { style: { minWidth: 0 } },
               h(
                 'div',
                 { className: 'dshSkillPanel_nameLine' },
-                h('span', { className: 'dshSkillPanel_name' }, skill.name),
+                h('span', { className: 'dshSkillPanel_name' }, skillLabel(skill)),
+                // A display name hides the invocation token, so the row keeps showing
+                // it: `/name` is what a person has to type.
+                named
+                  ? h('span', { className: 'dshSkillPanel_tag dshSkillPanel_tech', title: t('panel.techHint') }, `/${skill.name}`)
+                  : null,
                 h('span', { className: 'dshSkillPanel_tag' }, skill.source),
                 skill.installed === true
                   ? h('span', { className: 'dshSkillPanel_tag' }, t('panel.filter.installed'))
                   : null,
+                former === undefined
+                  ? null
+                  : h(
+                      'span',
+                      {
+                        className: 'dshSkillPanel_tag',
+                        title: t('panel.formerAll', { names: previousNames.join(', ') }),
+                      },
+                      former,
+                    ),
               ),
               h('div', { className: 'dshSkillPanel_desc', title: skill.description }, skill.description),
             ),
@@ -716,6 +1087,24 @@ window.__ModuleLoader__.load({
                     t('panel.switch.model'),
                   )
                 : h('span', { className: 'dshSkillPanel_tag', title: t('panel.readonlyHint') }, t('panel.readonly')),
+              editable
+                ? h(
+                    'button',
+                    {
+                      type: 'button',
+                      className: 'dshSkillPanel_btn',
+                      disabled: busy,
+                      title: t('panel.renameHint', { max: SKILL_NAME_MAX }),
+                      onClick: () => {
+                        setRenameTarget(skill)
+                        setRenameText('')
+                        setDisplayText(skill.displayName ?? '')
+                        setSub('rename')
+                      },
+                    },
+                    t('panel.rename'),
+                  )
+                : null,
               skill.installed === true
                 ? h(
                     'button',
@@ -816,6 +1205,89 @@ window.__ModuleLoader__.load({
               ),
             )
           }
+          if (sub === 'rename' && renameTarget !== undefined) {
+            const technical = renameText.trim()
+            const problem =
+              technical === ''
+                ? undefined
+                : renameProblem(t, {
+                    skills: state.skills,
+                    path: renameTarget.path,
+                    current: renameTarget.name,
+                    value: technical,
+                  })
+            const display = displayText.trim()
+            const displayIssue = displayProblem(t, {
+              skills: state.skills,
+              path: renameTarget.path,
+              value: display,
+            })
+            const changed = (technical !== '' && technical !== renameTarget.name) || display !== (renameTarget.displayName ?? '')
+            return h(
+              'div',
+              { className: 'dshSkillPanel_sub' },
+              h('div', { className: 'dshSkillPanel_subTitle' }, t('panel.renameTitle')),
+              h(
+                'div',
+                { className: 'dshSkillPanel_subHint' },
+                t('panel.renameCurrent', {
+                  name:
+                    renameTarget.displayName === undefined
+                      ? renameTarget.name
+                      : `${renameTarget.displayName}（/${renameTarget.name}）`,
+                }),
+              ),
+              h('div', { className: 'dshSkillPanel_subHint' }, t('panel.renameHint', { max: SKILL_NAME_MAX })),
+              h('input', {
+                className: 'dshSkillPanel_input',
+                placeholder: t('panel.displayLabel'),
+                'aria-label': t('panel.displayLabel'),
+                value: displayText,
+                onChange: (event) => setDisplayText(event.target.value),
+              }),
+              displayIssue === undefined
+                ? h('div', { className: 'dshSkillPanel_subHint' }, t('panel.displayHint'))
+                : h('div', { className: 'dshSkillPanel_err' }, displayIssue),
+              h('input', {
+                className: 'dshSkillPanel_input',
+                placeholder: `${t('panel.techLabel')} — ${renameTarget.name}`,
+                'aria-label': t('panel.techLabel'),
+                value: renameText,
+                onChange: (event) => setRenameText(event.target.value),
+              }),
+              problem === undefined
+                ? h('div', { className: 'dshSkillPanel_subHint' }, t('panel.techHint'))
+                : h('div', { className: 'dshSkillPanel_err' }, problem),
+              h(
+                'div',
+                { className: 'dshSkillPanel_subRow' },
+                h(
+                  'button',
+                  {
+                    type: 'button',
+                    className: 'dshSkillPanel_btn dshSkillPanel_btnPrimary',
+                    disabled: busy || displayIssue !== undefined || problem !== undefined || !changed,
+                    onClick: () => void submitRename(),
+                  },
+                  t('panel.renameSave'),
+                ),
+                h(
+                  'button',
+                  {
+                    type: 'button',
+                    className: 'dshSkillPanel_btn',
+                    onClick: () => {
+                      setSub(undefined)
+                      setRenameTarget(undefined)
+                      setRenameText('')
+                      setDisplayText('')
+                    },
+                  },
+                  t('panel.cancel'),
+                ),
+              ),
+            )
+          }
           return null
         }
 
@@ -871,7 +1343,23 @@ window.__ModuleLoader__.load({
             state.phase === 'loading' && state.skills.length === 0
               ? h('div', { className: 'dshSkillPanel_empty' }, t('panel.loading'))
               : matches.length === 0
-                ? h('div', { className: 'dshSkillPanel_empty' }, t('panel.empty'))
+                ? h(
+                    'div',
+                    { className: 'dshSkillPanel_empty' },
+                    h(
+                      'div',
+                      { className: 'dshSkillPanel_emptyTitle' },
+                      query.trim() === '' ? t('panel.empty') : t('panel.emptyQuery', { query: query.trim() }),
+                    ),
+                    h('div', { className: 'dshSkillPanel_emptyHint' }, t('panel.emptyHint')),
+                    query.trim() === '' || state.skills.length === 0
+                      ? null
+                      : h(
+                          'button',
+                          { type: 'button', className: 'dshSkillPanel_btn', onClick: () => setQuery('') },
+                          t('panel.clearSearch'),
+                        ),
+                  )
                 : h('div', { className: 'dshSkillPanel_body' }, ...matches.map(row)),
             h(
               'div',
@@ -885,12 +1373,267 @@ window.__ModuleLoader__.load({
       }
     }
 
+    /**
+     * The picker: the plugin's own popup above the composer.
+     *
+     * The host's `/` menu still serves typed queries; this surface exists because
+     * that menu cannot host a search box of ours, and because the plugin wants one
+     * opaque card of its own. It reuses the panel's ordering, its tag-aware search
+     * and its insertion path, so the two views cannot drift apart.
+     *
+     * @param options - translator and the shared wiring (catalog, use recording,
+     *   the folder and manage actions).
+     * @returns the picker component, fed per session by its overlay seat.
+     */
+    function createSkillPicker({ t, wiring }) {
+      return function SkillPicker({ useOpen, onClose, inputActions, fallbackActions }) {
+        const open = typeof useOpen === 'function' ? useOpen() : false
+        const close = typeof onClose === 'function' ? onClose : () => {}
+        const [skills, setSkills] = React.useState([])
+        const [query, setQuery] = React.useState('')
+        const [active, setActive] = React.useState(0)
+        const [error, setError] = React.useState(undefined)
+        const [note, setNote] = React.useState(undefined)
+        const inputRef = React.useRef(null)
+        const rootRef = React.useRef(null)
+
+        // Re-read the catalog on every open: a skill installed a second ago has to
+        // be visible here, and the listing is a local route.
+        React.useEffect(() => {
+          if (!open) return undefined
+          let cancelled = false
+          setQuery('')
+          setActive(0)
+          setError(undefined)
+          setNote(undefined)
+          void (async () => {
+            try {
+              const payload = await wiring.listSkills()
+              if (!cancelled) setSkills(payload?.skills ?? [])
+            } catch (cause) {
+              if (!cancelled) setError(cause instanceof Error ? cause.message : String(cause))
+            }
+          })()
+          return () => {
+            cancelled = true
+          }
+        }, [open])
+
+        // Opening moves the keyboard into the search box; closing hands it back to
+        // the composer, the way the menu it replaces does.
+        React.useEffect(() => {
+          if (!open) return undefined
+          inputRef.current?.focus({ preventScroll: true })
+          const root = rootRef.current
+          return () => handBackFocus(root)
+        }, [open])
+
+        React.useEffect(() => {
+          if (!open) return undefined
+          const onKey = (event) => {
+            if (event.key !== 'Escape') return
+            event.stopPropagation()
+            close()
+          }
+          const onPointerDown = (event) => {
+            const root = rootRef.current
+            if (root === null || !(event.target instanceof Node)) return
+            if (root.contains(event.target)) return
+            const card = root.closest('[data-composer-card]')
+            if (card?.contains(event.target) === true) {
+              // Going back to the editor gives the popup up, so a `/` typed there
+              // opens the host's own menu alone.
+              if (event.target instanceof Element && event.target.closest('[contenteditable="true"]') !== null) close()
+              return
+            }
+            close()
+          }
+          window.addEventListener('keydown', onKey, true)
+          document.addEventListener('pointerdown', onPointerDown, true)
+          return () => {
+            window.removeEventListener('keydown', onKey, true)
+            document.removeEventListener('pointerdown', onPointerDown, true)
+          }
+        }, [open, close])
+
+        if (!open) return null
+
+        const needle = query.trim()
+        // An empty query keeps the familiar view: most recent skills first, capped,
+        // then the two action rows. A query searches every skill, so the shortlist
+        // can never hide what someone is explicitly looking for.
+        const listed =
+          needle === ''
+            ? [...skills].sort((left, right) => recency(right) - recency(left)).slice(0, MENU_LIMIT)
+            : filterSkills(t, skills, needle)
+        const rows =
+          needle === ''
+            ? [
+                ...listed.map((skill) => ({ kind: 'skill', skill })),
+                { kind: 'action', actionId: 'add', name: t('menu.add'), description: t('menu.addHint') },
+                { kind: 'action', actionId: 'manage', name: t('menu.manage'), description: t('menu.manageHint') },
+              ]
+            : listed.map((skill) => ({ kind: 'skill', skill }))
+        const activeIndex = rows.length === 0 ? -1 : Math.min(active, rows.length - 1)
+
+        /** Same insertion path as the panel, with the same clipboard fallback. */
+        const pick = (skill) => {
+          const token = `/${skill.name} `
+          const actions =
+            inputActions ?? (typeof fallbackActions === 'function' ? fallbackActions() : undefined)
+          if (actions !== undefined && typeof actions.insertText === 'function') {
+            try {
+              const span = actions.captureInsertion()
+              if (actions.insertText(token, span) !== false) {
+                void wiring.recordUse(skill.name)
+                close()
+                return
+              }
+            } catch (cause) {
+              console.warn('[skill-market] could not insert the skill token:', cause)
+            }
+          }
+          // Never fail silently: the token lands on the clipboard instead, and the
+          // popup stays open with a note so the copy is not a surprise.
+          if (navigator.clipboard === undefined) {
+            setError(t('picker.clipboardFailed', { token: token.trim() }))
+            return
+          }
+          void navigator.clipboard
+            .writeText(token.trim())
+            .then(() => setNote(t('panel.copied', { token: token.trim() })))
+            .catch((cause) => setError(cause instanceof Error ? cause.message : String(cause)))
+        }
+
+        const runAction = (actionId) => {
+          close()
+          const started = actionId === 'add' ? wiring.onAdd() : wiring.onManage()
+          void Promise.resolve(started).catch((cause) => {
+            console.warn('[skill-market] picker action failed:', cause)
+          })
+        }
+
+        const onInputKeyDown = (event) => {
+          if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+            event.preventDefault()
+            const step = event.key === 'ArrowDown' ? 1 : -1
+            setActive((value) => Math.min(Math.max(value + step, 0), Math.max(rows.length - 1, 0)))
+            return
+          }
+          if (event.key !== 'Enter') return
+          event.preventDefault()
+          const row = activeIndex === -1 ? undefined : rows[activeIndex]
+          if (row === undefined) return
+          if (row.kind === 'skill') pick(row.skill)
+          else runAction(row.actionId)
+        }
+
+        const clearQuery = () => {
+          setQuery('')
+          setActive(0)
+          inputRef.current?.focus()
+        }
+
+        const rowNode = (row, index) => {
+          const isSkill = row.kind === 'skill'
+          const description = isSkill
+            ? row.skill.modelInvocable === false
+              ? `${t('menu.userOnly')} · ${row.skill.description}`
+              : row.skill.description
+            : row.description
+          const former = isSkill ? formerNameChip(t, row.skill) : undefined
+          const named = isSkill && typeof row.skill.displayName === 'string' && row.skill.displayName !== ''
+          return h(
+            'button',
+            {
+              key: isSkill ? `skill:${row.skill.name}@${String(row.skill.path)}` : `action:${row.actionId}`,
+              type: 'button',
+              role: 'option',
+              'aria-selected': index === activeIndex,
+              className: 'dshSkillPicker_row',
+              onMouseMove: () => setActive(index),
+              onMouseDown: (event) => {
+                event.preventDefault()
+                if (isSkill) pick(row.skill)
+                else runAction(row.actionId)
+              },
+            },
+            isSkill ? null : h('span', { className: 'dshSkillPicker_glyph', 'aria-hidden': 'true' }, '＋'),
+            h('span', { className: 'dshSkillPicker_name' }, isSkill ? skillLabel(row.skill) : row.name),
+            named
+              ? h('span', { className: 'dshSkillPicker_tag dshSkillPicker_tech' }, `/${row.skill.name}`)
+              : null,
+            former === undefined
+              ? null
+              : h(
+                  'span',
+                  {
+                    className: 'dshSkillPicker_tag',
+                    title: t('panel.formerAll', { names: (row.skill.previousNames ?? []).join(', ') }),
+                  },
+                  former,
+                ),
+            h('span', { className: 'dshSkillPicker_desc', title: description }, description),
+          )
+        }
+
+        return h(
+          'div',
+          { className: 'dshSkillPicker_popup', ref: rootRef, 'data-skill-market': 'picker' },
+          h(
+            'div',
+            { className: 'dshSkillPicker_search' },
+            h('input', {
+              ref: inputRef,
+              type: 'search',
+              className: 'dshSkillPicker_input',
+              placeholder: t('picker.search'),
+              'aria-label': t('picker.search'),
+              value: query,
+              onChange: (event) => {
+                setQuery(event.target.value)
+                setActive(0)
+              },
+              onKeyDown: onInputKeyDown,
+            }),
+            needle === ''
+              ? null
+              : h('button', { type: 'button', className: 'dshSkillPicker_clear', onClick: clearQuery }, t('picker.clear')),
+          ),
+          error === undefined
+            ? null
+            : h('div', { className: 'dshSkillPicker_err' }, t('panel.error', { message: error })),
+          note === undefined ? null : h('div', { className: 'dshSkillPicker_note' }, note),
+          rows.length === 0
+            ? h(
+                'div',
+                { className: 'dshSkillPicker_empty' },
+                h('div', { className: 'dshSkillPicker_emptyTitle' }, t('picker.emptyQuery', { query: needle })),
+                h('div', { className: 'dshSkillPicker_emptyHint' }, t('picker.emptyHint')),
+                h('button', { type: 'button', className: 'dshSkillPicker_clear', onClick: clearQuery }, t('picker.clear')),
+              )
+            : h(
+                'div',
+                { className: 'dshSkillPicker_viewport', role: 'listbox', 'aria-label': t('picker.search') },
+                ...rows.map(rowNode),
+              ),
+          h(
+            'div',
+            { className: 'dshSkillPicker_foot' },
+            h('span', null, t('picker.keys')),
+            h('span', null, t('picker.count', { count: needle === '' ? skills.length : rows.length })),
+          ),
+        )
+      }
+    }
+
     /** The composer button. */
-    function SkillMarketButton({ open, menu, t, capture, inputActions }) {
+    function SkillMarketButton({ open, menu, t, capture, inputActions, useOpen }) {
       React.useEffect(() => {
         if (typeof capture === 'function') capture(inputActions)
       }, [capture, inputActions])
       const launched = menu === undefined ? false : useStoreValue(menu) === SOURCE
+      const pickerOpen = typeof useOpen === 'function' ? useOpen() : false
       const label = typeof t === 'function' ? t('button.label') : '技能'
       const title = typeof t === 'function' ? t('button.title') : '选择技能'
       const disabled = typeof open !== 'function'
@@ -901,7 +1644,7 @@ window.__ModuleLoader__.load({
           className: 'dshSkillMarket_button',
           'aria-label': title,
           'aria-haspopup': 'menu',
-          'aria-expanded': launched ? 'true' : 'false',
+          'aria-expanded': launched || pickerOpen ? 'true' : 'false',
           title,
           disabled,
           onClick: () => {
@@ -943,6 +1686,7 @@ window.__ModuleLoader__.load({
         try {
           ensureStyles()
           ensurePanelStyles()
+          ensurePickerStyles()
           ctx.effect(() => ctx.locale.register(NS, { zh, en }), 'skill-market: dictionaries')
           const t = ctx.locale.bind(NS)
 
@@ -966,10 +1710,13 @@ window.__ModuleLoader__.load({
             return value
           }
 
-          // One source owns the whole menu: the skill rows, then the two action
-          // rows at the bottom. The button opens the menu through
-          // `toggleSource(name)`, and the host renders exactly that one source —
-          // so a second source could never appear beside it.
+          // The picker is per session, because its seat in the composer overlay is:
+          // one shared flag would open it in every mounted composer at once.
+          const pickers = createSessionFlags()
+
+          // One source owns the menu that a typed `/` opens: the skill rows, then
+          // the two action rows at the bottom. The host renders exactly that one
+          // source, so a second source could never appear beside it.
           const handleAddFromFolder = async () => {
             const path = await pickFolder(ctx, t)
             if (path === undefined) return
@@ -994,9 +1741,11 @@ window.__ModuleLoader__.load({
           }
 
           // The composer's own insertion channel, captured from the session-scoped
-          // slot props. It is what lets the panel put `/<skill> ` into the draft
-          // instead of asking the user to retype it.
+          // slot props. It is what lets the panel and the picker put `/<skill> `
+          // into the draft instead of asking the user to retype it. The panel uses
+          // the last capture; the picker asks for the one of its own session.
           const inputActions = { value: undefined }
+          const sessionActions = new Map()
 
           ctx.effect(
             () =>
@@ -1022,6 +1771,40 @@ window.__ModuleLoader__.load({
             },
           })
 
+          // The picker takes a seat in the composer's own overlay, so it opens
+          // directly above the input — where the host menu it replaces used to be.
+          const SkillPicker = createSkillPicker({
+            t,
+            wiring: {
+              listSkills,
+              recordUse,
+              onAdd: handleAddFromFolder,
+              onManage: handleManage,
+            },
+          })
+
+          ctx.slots.inject('conversation.input.overlay', () =>
+            ctx.slots.register(
+              {
+                name: 'conversation.input.overlay',
+                id: 'skill-market.picker',
+                order: 30,
+                locale: NS,
+                inject: (sessionId) => {
+                  const key = typeof sessionId === 'string' ? sessionId : ''
+                  return {
+                    useOpen: () => pickers.useOpen(key),
+                    onClose: () => pickers.set(key, false),
+                    // The session kit hands the composer actions to session-scoped
+                    // seats; the button also captures them, so either route works.
+                    fallbackActions: () => sessionActions.get(key),
+                  }
+                },
+              },
+              SkillPicker,
+            ),
+          )
+
           // A panel is a global overlay, so it takes the overlay seat rather than
           // a composer slot.
           ctx.slots.inject('shell.overlay', () =>
@@ -1037,25 +1820,30 @@ window.__ModuleLoader__.load({
                 locale: NS,
                 inject: (sessionId) => {
                   const actx = ctx.sessions.scope(sessionId)
-                  if (actx === undefined) return { open: undefined, menu: undefined, t, capture: () => {} }
+                  if (actx === undefined) {
+                    return { open: undefined, menu: undefined, t, capture: () => {}, useOpen: () => false }
+                  }
                   const controller = ctx.inputTriggers.sessionOf(actx)
+                  const key = typeof sessionId === 'string' ? sessionId : ''
                   return {
                     menu: controller.launcher,
+                    useOpen: () => pickers.useOpen(key),
                     open: () => {
-                      controller.toggleSource(SOURCE, {
-                        trigger: TRIGGER,
-                        query: '',
-                        quoted: false,
-                        position: 'leading',
-                        span: { start: 0, end: 0, draftRev: 0 },
-                      })
+                      if (pickers.isOpen(key)) {
+                        pickers.set(key, false)
+                        return
+                      }
+                      // One popup at a time: whatever the host menu is showing for
+                      // this composer gives way to the picker.
+                      controller.dismiss()
+                      pickers.set(key, true)
                     },
                     t,
                     // The host resolves session props for this slot; the button
-                    // hands the input actions back so the overlay panel can use
-                    // them too (an overlay is not session-scoped).
+                    // hands the input actions back so the overlays can use them too.
                     capture: (actions) => {
                       inputActions.value = actions
+                      if (actions !== undefined) sessionActions.set(key, actions)
                     },
                   }
                 },
@@ -1064,7 +1852,9 @@ window.__ModuleLoader__.load({
             ),
           )
 
-          console.info('[skill-market] client half active: menu rows, composer button and management panel registered')
+          console.info(
+            '[skill-market] client half active: menu rows, picker, composer button and management panel registered',
+          )
         } catch (error) {
           console.error('[skill-market] client half failed to activate; UI contributions are unavailable:', error)
         }

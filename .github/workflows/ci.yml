@@ -35,3 +35,9 @@ jobs:
 
       - name: Smoke tests
         run: node test/smoke.js
+
+      - name: Rename tests
+        run: node test/rename.js
+
+      - name: Client render tests
+        run: node test/client-render.js
